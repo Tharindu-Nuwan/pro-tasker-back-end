@@ -1,7 +1,8 @@
 # Pro-Tasker Backend
 
 ---
-This is the backend implementation of the Pro-Tasker todo application. This backend built using the Spring framework.
+This is the backend infrastructure of a dynamic task management application called Pro-Tasker todo application. This backend built using the Spring framework.
+Users can effortlessly perform CRUD operations on to-do items with persistent storage facilitated through a MySQL database.
 
 
 ## Features
