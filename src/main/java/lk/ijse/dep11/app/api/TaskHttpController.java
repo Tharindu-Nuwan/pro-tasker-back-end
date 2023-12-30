@@ -7,6 +7,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.PreDestroy;
 import java.sql.*;
@@ -71,6 +72,24 @@ public class TaskHttpController {
                 taskList.add(new TaskTO(id, description, status, email));
             }
             return taskList;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/{id}")
+    public void deleteTask(@PathVariable int id) {
+        try (Connection connection = pool.getConnection()) {
+            PreparedStatement stmExist = connection
+                    .prepareStatement("SELECT * FROM task WHERE id = ?");
+            stmExist.setInt(1, id);
+            if (!stmExist.executeQuery().next()) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found!");
+            }
+            PreparedStatement stm = connection.prepareStatement("DELETE FROM task WHERE id = ?");
+            stm.setInt(1, id);
+            stm.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
